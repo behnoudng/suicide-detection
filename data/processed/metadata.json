@@ -1,0 +1,10 @@
+{
+  "train_size": 185659,
+  "test_size": 46415,
+  "total_size": 232074,
+  "classes": {
+    "suicide": 92830,
+    "non-suicide": 92829
+  },
+  "test_split": 0.2
+}
