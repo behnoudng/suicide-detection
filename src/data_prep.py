@@ -3,11 +3,13 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import json
+
 def load_raw_data(filepath="data/raw/suicide_data.csv"):
     print(f"loading data from {filepath}...")
     df = pd.read_csv(filepath)
     print(f"loaded {len(df)} rows")
     return df
+
 def clean_data(df):
     print('\nclearning data...')
     df = df.drop(columns=['Unnamed: 0'], axis=1)
@@ -28,6 +30,7 @@ def clean_data(df):
     print("no empty rows found.")
     df['class'] = df['class'].str.strip().str.lower()
     return df
+
 def check_class_balance(df):
     print("\n" + "="*50)
     print("class distribution")
@@ -44,6 +47,7 @@ def check_class_balance(df):
     else:
         print("\n Dataset is reasonably balanced")
     return counts
+
 def split_data(df, test_size=0.2, random_state=42):
     from sklearn.model_selection import train_test_split
     print(f"\n" + "="*50)
