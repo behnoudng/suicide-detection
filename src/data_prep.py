@@ -32,21 +32,24 @@ def clean_data(df):
     return df
 
 def check_class_balance(df):
+
     print("\n" + "="*50)
     print("class distribution")
     print("="*50)
+    
     counts = df['class'].value_counts()
     percentages = df['class'].value_counts(normalize=True) * 100
     for key, count in counts.items():
         pct = percentages[key]
         print(f"{key:15s}: {count:5d} ({pct:5.1}%)")
-    ratio = counts.max() / counts.min()
-    if ratio > 3:
-        print(f"Imbalanced dataset (ratio: {ratio:.1f}:1)")
-        print("Consider using SMOTE or class weights")
+
+    minority_share = counts.min() / counts.sum()
+    if minority_share < 0.05:
+        print("Severe imbalance - SMOTE required")
+    elif minority_share < 0.1:
+        print("Moderate - try class weights")
     else:
-        print("\n Dataset is reasonably balanced")
-    return counts
+        print("OK")
 
 def split_data(df, test_size=0.2, random_state=42):
     from sklearn.model_selection import train_test_split
