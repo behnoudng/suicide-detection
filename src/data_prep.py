@@ -15,7 +15,7 @@ def clean_data(df):
     df = df.drop(columns=['Unnamed: 0'], axis=1)
     missing = df.isnull().sum()
     if missing.any():
-        print("found missing values:\n{missing[missing>0]}")
+        print(f"found missing values:\n{missing[missing>0]}")
         df = df.dropna()
         print(f"dropped rows with missing values")
     before = len(df)
@@ -42,7 +42,7 @@ def check_class_balance(df):
         print(f"{key:15s}: {count:5d} ({pct:5.1}%)")
     ratio = counts.max() / counts.min()
     if ratio > 3:
-        print(f"Imbalanced dataset (ration: {ratio:.1f}:1)")
+        print(f"Imbalanced dataset (ratio: {ratio:.1f}:1)")
         print("Consider using SMOTE or class weights")
     else:
         print("\n Dataset is reasonably balanced")
