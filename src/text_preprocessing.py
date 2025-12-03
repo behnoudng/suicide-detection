@@ -41,20 +41,24 @@ class TextPreprocessor:
         text = re.sub(r'\s+', ' ', text).strip()
         text = re.sub(r'[^a-zA-Z0-9\s\.\,\!\?\'\-]', '', text)
         return text
+    
     def tokenize(self, text):
         try: 
             tokens = word_tokenize(text)
         except:
             print("Tokenization failed.")
         return tokens
+    
     def remove_stop_words(self, tokens):
         if not self.remove_stopwords:
             return tokens
         return [word for word in tokens if word not in self.stop_words]
+    
     def lemmatize_tokens(self, tokens):
         if not self.lemmatize:
             return tokens
         return [self.lemmatizer.lemmatize(token) for token in tokens]
+    
     def preprocess(self, text):
         text = self.clean_text(text)
         tokens = self.tokenize(text)
@@ -63,6 +67,7 @@ class TextPreprocessor:
         # remove single characters and number-only tokens
         tokens = [t for t in tokens if len(t) > 1 and not t.isdigit()]
         return ' '.join(tokens)
+    
 def preprocess_dataset(input_path, output_path, preprocessor):
     print(f"Processing {input_path}")
     df = pd.read_csv(input_path)
@@ -77,6 +82,7 @@ def preprocess_dataset(input_path, output_path, preprocessor):
     df.to_csv(output_path, index=False)
     print(f"Saved to {output_path}")
     return df
+
 def main():
     print("\n" + "=" * 50)
     print("TEXT PREPROCESSING")

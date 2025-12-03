@@ -36,7 +36,7 @@ def check_class_balance(df):
     print("\n" + "="*50)
     print("class distribution")
     print("="*50)
-    
+
     counts = df['class'].value_counts()
     percentages = df['class'].value_counts(normalize=True) * 100
     for key, count in counts.items():
@@ -62,18 +62,23 @@ def split_data(df, test_size=0.2, random_state=42):
     return train_df, test_df
 
 def save_processed_data(train_df, test_df, output_dir='data/processed'):
+
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
+
     print(f"\n" + "="*50)
     print("Saving processed data...")
     print("="*50)
+
     train_path = output_path / 'train.csv'
     test_path = output_path / 'test.csv'
 
     train_df.to_csv(train_path, index=False)
     test_df.to_csv(test_path, index=False)
+
     print(f"Saved: {train_path}")
     print(f"Saved: {test_path}")
+
     metadata = {
         'train_size': len(train_df),
         'test_size': len(test_df),
@@ -82,24 +87,29 @@ def save_processed_data(train_df, test_df, output_dir='data/processed'):
         'test_split': 0.2,
     }
     metadata_path = output_path / 'metadata.json'
+
     with open(metadata_path, 'w') as f:
         json.dump(metadata, f, indent=2)
     print(f"Saved: {metadata_path}")
 
 def main():
+
     print("\n" + "="*50)
     print("SUICIDE DETECTION DATA PREPROCESSING")
     print("="*50)
+
     df = load_raw_data()
     df = clean_data(df)
     check_class_balance(df)
     train_df, test_df = split_data(df)
     save_processed_data(train_df, test_df)
+
     print("\n", "="*50)
     print("PREPROCESSING COMPLETE!")
     print("="*50)
     print("\nNext steps:")
     print("1. Open notebook/01_eda.ipynb to explore the data")
     print("2. Then run notebooks/02_modeling.ipynb to train models")
+    
 if __name__ == '__main__':
     main()
