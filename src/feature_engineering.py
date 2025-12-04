@@ -1,78 +1,105 @@
 #3
 import pandas as pd
+import numpy as np
 import pickle
-from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import LabelEncoder
+import re
 
 class FeatureEngineer:
-    def __init__(self, max_features=5000):
-        self.max_features = max_features
-        self.vectorizer = TfidfVectorizer(
-            max_features=max_features,
-            ngram_range=(1, 2),
-            min_df=2,
-            max_df=0.8,
-            sublinear_tf=True,
-            stop_words="english"
+    def __init__(self):
+        self.tfidf = TfidfVectorizer(
+            max_features=15000,
+            ngram_range=(1, 3),
+            min_df=3,
+            max_df=0.9,
+            sublinear_tf=True
         )
         self.encoder = LabelEncoder()
-    def fit_transform(self, X_train, y_train):
-        X_vec = self.vectorizer.fit_transform(X_train)
-        y_enc = self.encoder.fit_transform(y_train)
-        print(f"TF-IDF matrix shape: {X_vec.shape}")
-        return X_vec, y_enc
+
+    def extract_custom_features(self, texts):
+        """Extract psychological features"""
+        features = []
+        
+        for text in texts:
+            feat_dict = {}
+            
+            feat_dict['text_length'] = len(text)
+            feat_dict['word_count'] = len(text.split())
+            
+            feat_dict['exclamation_count'] = text.count('!')
+            feat_dict['question_count'] = text.count('?')
+            feat_dict['ellipsis_count'] = text.count('...')
+            
+            first_person = ['i ', 'me ', 'my ', 'myself ', 'mine ']
+            text_lower = ' ' + text.lower() + ' '
+            feat_dict['first_person_count'] = sum(text_lower.count(p) for p in first_person)
+            
+            negations = ['not ', 'no ', "n't ", 'never ', 'nothing ']
+            feat_dict['negation_count'] = sum(text_lower.count(n) for n in negations)
+            
+            death_words = ['die', 'death', 'kill', 'suicide', 'end', 'gone']
+            feat_dict['death_word_count'] = sum(text_lower.count(w) for w in death_words)
+            
+            sadness = ['sad', 'depressed', 'hopeless', 'empty', 'lonely']
+            feat_dict['sadness_count'] = sum(text_lower.count(w) for w in sadness)
+            
+            if feat_dict['word_count'] > 0:
+                feat_dict['first_person_ratio'] = feat_dict['first_person_count'] / feat_dict['word_count']
+                feat_dict['negation_ratio'] = feat_dict['negation_count'] / feat_dict['word_count']
+                feat_dict['death_ratio'] = feat_dict['death_word_count'] / feat_dict['word_count']
+            else:
+                feat_dict['first_person_ratio'] = 0
+                feat_dict['negation_ratio'] = 0
+                feat_dict['death_ratio'] = 0
+            features.append(feat_dict)
+        return pd.DataFrame(features)
     
-    def transform(self, X_test, y_test=None):
-        X_vec = self.vectorizer.transform(X_test)
-        y_enc = self.encoder.transform(y_test) if y_test is not None else None
-        print(f"Transformed test data: {X_vec.shape}")
-        return X_vec, y_enc
+    def fit_transform(self, texts, labels):
+        tfidf_features = self.tfidf.fit_transform(texts)
+        custom_features = self.extract_custom_features(texts)
+        encoded_labels = self.encoder.fit_transform(labels)
+        return tfidf_features, custom_features, encoded_labels
     
-    def save(self, path="models/feature_engineering.pkl"):
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "wb") as f:
+    def transform(self, texts):
+        tfidf_features = self.tfidf.transform(texts)
+        custom_features = self.extract_custom_features(texts)
+        return tfidf_features, custom_features
+    
+    def save(self, filepath):
+        with open(filepath, 'wb') as f:
             pickle.dump({
-                "vectorizer": self.vectorizer,
-                "encoder": self.encoder
+                'tfidf': self.tfidf,
+                'label_encoder': self.encoder
             }, f)
-        print(f"Saved vectorizer + encoder inside {path}")
-    
-    @staticmethod
-    def load(path="models/feature_engineering.pkl"):
-        with open(path, "rb") as f:
-            data = pickle.load(f)
-        fe = FeatureEngineer()
-        fe.vectorizer = data["vectorizer"]
-        fe.encoder = data["encoder"]
-        return fe
-    
-def main():
-    print("FEATURE ENGINEERING")
-    data_dir = Path("data/processed")
-    train_csv = data_dir / "train_preprocessed.csv"
-    test_csv = data_dir / "test_preprocessed.csv"
-    train_df = pd.read_csv(train_csv)
-    test_df = pd.read_csv(test_csv)
 
-    print(f"Train: {train_df.shape}, Test: {test_df.shape}")
+
+if __name__ == '__main__':
+    train = pd.read_csv('data/processed/train_preprocessed.csv')
+    test = pd.read_csv('data/processed/test_preprocessed.csv')
+    
     fe = FeatureEngineer()
-    X_train, y_train = fe.fit_transform(
-        train_df["processed_text"], train_df["class"]
+    
+    tfidf_train, custom_train, y_train = fe.fit_transform(
+        train['processed_text'].values,
+        train['class'].values
     )
-    X_test, y_test = fe.transform(
-        test_df["processed_text"], train_df["class"]
-    )
-    fe.save()
+    
+    tfidf_test, custom_test = fe.transform(test['processed_text'].values)
+    y_test = fe.encoder.transform(test['class'].values)
+    
+    from scipy.sparse import save_npz, hstack
+    from scipy.sparse import csr_matrix
 
-    print("\n Top 15 vocab terms:")
-    vocab = list(fe.vectorizer.vocabulary_.keys())[:15]
-    print(vocab)
-    print("\nEncoded labels:", fe.encoder.classes_)
-    print("Train matrix shape: ", X_train.shape, y_train.shape)
-    print("Test matrix shape:", X_test.shape, y_test.shape)
-    print("\nfeature engineering complete\n")
-    print("Next step: train multiple models")
-
-if __name__ == "__main__":
-    main()
+    X_train = hstack([tfidf_train, csr_matrix(custom_train.values)])
+    X_test = hstack([tfidf_test, csr_matrix(custom_test.values)])
+    
+    save_npz('data/processed/X_train_enhanced.npz', X_train)
+    save_npz('data/processed/X_test_enhanced.npz', X_test)
+    np.save('data/processed/y_train.npy', y_train)
+    np.save('data/processed/y_test.npy', y_test)
+    fe.save('models/feature_engineering_v2.pkl')
+    
+    print(f"Enhanced features shape: {X_train.shape}")
+    print(f"TF-IDF features: {tfidf_train.shape[1]}")
+    print(f"Custom features: {custom_train.shape[1]}")
