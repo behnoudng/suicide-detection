@@ -5,3 +5,6 @@ etc
 
 # remove the dataset for now due to large file error
 *.csv
+*.pkl
+*.npz
+*.npy
