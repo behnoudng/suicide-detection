@@ -98,7 +98,7 @@ if __name__ == '__main__':
     save_npz('data/processed/X_test_enhanced.npz', X_test)
     np.save('data/processed/y_train.npy', y_train)
     np.save('data/processed/y_test.npy', y_test)
-    fe.save('models/feature_engineering_v2.pkl')
+    fe.save('data/models/feature_engineering_v2.pkl')
     
     print(f"Enhanced features shape: {X_train.shape}")
     print(f"TF-IDF features: {tfidf_train.shape[1]}")
