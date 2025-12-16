@@ -8,3 +8,5 @@ etc
 *.pkl
 *.npz
 *.npy
+data/models/suicide_bert_final/
+data/models/suicide_bert_final.zip
