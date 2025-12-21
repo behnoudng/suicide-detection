@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-train_o = pd.read_csv("data/processed/train.csv")
-test_o = pd.read_csv("data/processed/test.csv")
+train_o = pd.read_csv("data/processed/train_preprocessed.csv")
+test_o = pd.read_csv("data/processed/test_preprocessed.csv")
 
 train_texts, val_texts, train_labels, val_labels = train_test_split(
     train_o["text"].values,
