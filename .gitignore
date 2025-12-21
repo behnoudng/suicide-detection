@@ -10,3 +10,4 @@ etc
 *.npy
 data/models/suicide_bert_final/
 data/models/suicide_bert_final.zip
+project_structure.txt
