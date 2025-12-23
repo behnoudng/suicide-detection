@@ -8,8 +8,8 @@ test_df = pd.read_csv("data/processed/bert_test.csv")
 y_test = test_df['label'].values
 
 
-xgb_probs = np.load('models/xgboost_test_proba.npy')
-bert_probs = np.load('models.bert_test_proba.npy')
+xgb_probs = np.load('data/models/xgboost_test_proba.npy')
+bert_probs = np.load('data/models/bert_test_proba.npy')
 
 # use grid search to get the best weights
 best_recall = 0
