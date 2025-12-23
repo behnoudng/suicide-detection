@@ -59,13 +59,13 @@ class HybridEnsemble:
     
 if __name__ == '__main__':
     X_test = load_npz('data/processed/X_test_enhanced.npz')
-    print(f"X_test:\n {X_test}")
+    # print(f"X_test:\n {X_test}")
     test_df = pd.read_csv("data/processed/bert_test.csv")
-    print(f"test_df:\n {test_df}")
+    # print(f"test_df:\n {test_df}")
     y_test = test_df['label'].values
-    print(f"y_test:\n {y_test}")
+    # print(f"y_test:\n {y_test}")
     texts_test = test_df['text'].astype(str).tolist()
-    print(f"texts_test: \n {texts_test}")    
+    # print(f"texts_test: \n {texts_test}")    
 
 
     ensemble = HybridEnsemble(
@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     print("Generating ensemble predictions...")
     ensemble_probs, xgb_probs, bert_probs = ensemble.predict_proba(X_test, texts_test)
-    np.save("models/ensemble_test_proba.npy", ensemble_probs)
+    np.save("data/models/ensemble_test_proba.npy", ensemble_probs)
 
     print("\n" + "=" * 60)
     print("ENSEMBLE PERFORMANCE")
