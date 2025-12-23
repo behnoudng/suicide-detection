@@ -11,6 +11,8 @@ train_texts, val_texts, train_labels, val_labels = train_test_split(
     stratify=train_o['class'],
     random_state=42
 )
+print(train_texts.shape, val_texts.shape, train_labels.shape, val_labels.shape)
+
 
 bert_train = pd.DataFrame({
     'text': train_texts,
