@@ -108,6 +108,17 @@ pip install -r requirements.txt
 
 ---
 
+## Model Weights
+The fine-tuned BERT model (438MB) is hosted separately:
+- **Hugging Face:** [behnoudng/suicide-bert](https://huggingface.co/behnoudng/suicide-bert)
+
+```bash
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+model = AutoModelForSequenceClassification.from_pretrained("behnoudng/suicide-bert")
+tokenizer = AutoTokenizer.from_pretrained("behnoudng/suicide-bert")
+```
+
 ## Usage
 ### Training Pipeline
 
