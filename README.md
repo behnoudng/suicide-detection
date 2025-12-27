@@ -153,25 +153,25 @@ prediction = ensemble.predict(X_features, texts, threshold=0.4)
 
 ## Project Structure
 
-├── api/                    # FastAPI backend (coming soon)
-├── app/                    # Streamlit interface (coming soon)
-├── data/
-│   ├── raw/                # Original dataset
-│   ├── processed/          # Preprocessed splits
-│   └── models/             # Trained models & artifacts
-├── notebooks/
-│   ├── 01_eda.ipynb
-│   ├── 02_modeling.ipynb
-│   ├── 03_evaluation.ipynb
-│   └── finetune_bert.ipynb
-├── src/
-│   ├── data_prep.py
-│   ├── text_preprocessing.py
-│   ├── feature_engineering.py
-│   ├── train_xgboost.py
-│   ├── ensemble_model.py
-│   └── tune_ensemble.py
-└── tests/
+├── api/                    # FastAPI backend (coming soon)   
+├── app/                    # Streamlit interface (coming soon)   
+├── data/   
+│   ├── raw/                # Original dataset   
+│   ├── processed/          # Preprocessed splits   
+│   └── models/             # Trained models & artifacts   
+├── notebooks/   
+│   ├── 01_eda.ipynb   
+│   ├── 02_modeling.ipynb   
+│   ├── 03_evaluation.ipynb   
+│   └── finetune_bert.ipynb   
+├── src/   
+│   ├── data_prep.py   
+│   ├── text_preprocessing.py   
+│   ├── feature_engineering.py   
+│   ├── train_xgboost.py   
+│   ├── ensemble_model.py   
+│   └── tune_ensemble.py   
+└── tests/   
 
 ---
 ## API & Interface
